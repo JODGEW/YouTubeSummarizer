@@ -1,0 +1,281 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #1a1a1a;
+}
+
+/* Header styles */
+header {
+    color: white;
+    background-color: #333;
+    padding-left: 250px; /* Should match the actual width of your sidebar */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #C3073F; /* Brand color for SUMMIFY */
+    margin: 0; /* Removes default margin */
+    padding: 10px 0; /* Adds padding at the top and bottom */
+    padding-left: 20px; /* Align text with the main content */
+    line-height: 1.2; /* Adjusts the line height to reduce space */
+}
+
+header p {
+    font-size: 16px;
+    margin: 0; /* Removes default margin */
+    padding: 10px 0; /* Adds padding at the top and bottom */
+    padding-left: 20px; /* Align text with the main content */
+    line-height: 1.2; /* Adjusts the line height to reduce space */
+}
+
+
+/* Sidebar styles */
+#sidebar {
+    background: #121212; /* Sidebar background color */
+    padding: 20px;
+    width: 250px; /* Adjust this width as necessary */
+    height: 100vh;
+    box-sizing: border-box;
+    position: fixed; /* Fixed position */
+    top: 0;
+    left: 0;
+    z-index: 100; /* Ensures that the sidebar is above other content */
+}
+
+#menu p {
+    color: #f1f1f1; /* Light text color for menu items */
+    cursor: pointer;
+    margin-bottom: 16px; /* Space between menu items */
+}
+
+#menu p:hover {
+    color: #C3073F; /* Accent color for hover state */
+}
+
+/* ID greeting */
+.greeting {
+    margin: 0;
+}
+
+/* Main Content styles */
+.main-content {
+    margin-left: 250px; /* Should match the actual width of your sidebar */
+    margin-right: auto; /* Automatically adjust the right margin */
+    justify-content: center;
+    padding: 20px;
+    width: calc(100% - 250px); /* Ensure this accounts for the actual width of your sidebar */
+    box-sizing: border-box;
+}
+
+/* Inside the main content */
+.title {
+    color: #fff;
+    font-size: 24px; /* Larger font size for title */
+    font-weight: bold;
+    margin-bottom: 4px; /* Small margin below the title */
+}
+
+.subtitle {
+    color: #f1f1f1;
+    font-size: 16px; /* Smaller font size for subtitle */
+    margin-bottom: 20px; /* Larger margin below the subtitle */
+}
+
+#video-url {
+    background-color: #1a1a1a; /* The background color of the input */
+    color: #fff; /* The text color within the input */
+    border: 1px solid #333; /* Border color to match the overall style */
+    padding: 10px; /* Padding inside the input field */
+    margin-right: 10px; /* Optional: space to the right of the input field */
+    width: 100%; /* Input field width - will be constrained by parent flexbox */
+    box-sizing: border-box; /* Make sure padding and border are included in width calculation */
+}
+
+select {
+    padding: 10px;
+    margin-right: 10px; /* Spacing to the right */
+}
+
+/* Style for the unselected, placeholder-like options */
+select option[value=""][disabled] {
+    display: none;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-area input[type="text"], .input-area select, .input-area button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.input-area input[type="text"] {
+    flex-grow: 1; /* Input field takes up remaining space */
+    margin-right: 10px;
+}
+
+.input-area select {
+    background-color: #262626; /* Darker background for dropdown */
+    color: #fff;
+}
+
+#summarify-btn {
+    background-color: #fff; /* Red background for button */
+    color: #000;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+}
+
+#summarify-btn:hover {
+    background-color: #E1D9D1; /* Darker red on hover */
+}
+
+/* Age restricted message */
+#message {
+    color: white;
+    font-size: 22px;
+    margin-top: 20px;
+}
+
+/* Thumbnail YouTube Image */
+#loading-message {
+    color: white;
+    font-size: 22px;
+}
+
+#video-title {
+    color: white;
+    font-size: 22px;
+}
+
+.transcription-window {
+    background-color: #2c2c2c; /* Dark background for contrast */
+    color: white; /* White text for readability */
+    font-size: 16px; /* Adjust the font size as needed */
+    padding: 20px; /* Add some padding around the text */
+    border-radius: 10px; /* Rounded corners for aesthetics */
+    max-width: 800px; /* Set a max-width for the container */
+    margin: auto; /* This will center the div if it has a width */
+    overflow-y: auto; /* Add scroll if the text is too long */
+}
+
+#summary {
+    margin: 0; /* Remove default paragraph margins */
+}
+
+#video-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers items on the cross axis */
+    justify-content: center; /* Centers items on the main axis */
+    text-align: center; /* Centers text inside child elements */
+}
+  
+#video-info img {
+    max-width: 100%;  /* Adjust the max width as needed */
+    max-height: 500px; /* Adjust the max height as needed */
+    object-fit: contain; /* This will ensure the aspect ratio is maintained */
+    width: auto;  /* Ensures the width is not stretched */
+    height: auto; /* Ensures the height is not stretched */
+    display: block; /* Ensures the image is block level for correct centering */
+}
+  
+#video-player-container {
+    width: 100%; /* Full width of the container */
+    max-width: 1080px; /* Maximum width of the video player */
+    height: 0; /* Height starts at 0 */
+    padding-bottom: 45%; /* Aspect ratio is determined by padding-bottom */
+    position: relative; /* The iframe will position itself relative to this container */
+    margin-top: 20px; /* Centers the container with a margin above and below */
+    background: #000; /* Sets a black background */
+}
+  
+#video-player-container iframe {
+    position: absolute; /* Positions the iframe absolutely within the container */
+    top: 0; /* Aligns to the top of the container */
+    left: 0; /* Aligns to the left of the container */
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the padded area */
+    border: none; /* Removes any border */
+}  
+  
+#thumbnail {
+    margin-top: 20px;
+}
+  
+#video-title {
+    margin-top: 20px;
+}
+
+#loading-message {
+    margin-top: 20px;
+}
+
+/* wait message window */
+.loading-content {
+    position: fixed;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This ensures that the spinner and text are centered horizontally */
+    z-index: 1000;
+} 
+  
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1); /* Light grey border */
+    border-top-color: #2c292e; /* Blue border for the spinner segment */
+    border-radius: 50%;
+    width: 40px; /* Spinner size */
+    height: 40px; /* Spinner size */
+    margin-bottom: 10px; /* Space between spinner and text */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  
+.loading-text {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 8px; /* Less space between spinner and text for a compact design */
+    color: #333;
+    font-size: 14px;
+}  
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 200px; /* Smaller sidebar for smaller screens */
+    }
+
+    header {
+        padding-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        left: var(--sidebar-width);
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+    }
+
+    #sidebar {
+        width: var(--sidebar-width);
+    }
+}

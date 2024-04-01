@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Summify - Video Summarizer</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>SUMMIFY</h1>
+        <p>Good day, Jakcy &#128075;</p>
+    </header>
+    
+    <aside id="sidebar">
+        <!-- Sidebar content here -->
+        <div id="menu">
+            <p>Dashboard</p>
+            <p>Archive</p>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="title">Summarize any video</div>
+        <div class="subtitle">Podcasts, talk shows, interviews, documentaries, or any other video.</div>
+
+        <div class="input-area">
+            <input type="text" placeholder="YouTube Video URL" id="video-url">
+            <select id="summary-style">
+                <option value="" disabled selected>Summary style</option>
+                <option value="Transcribe">Transcribe</option>
+                <option value="Summarize">Summarize</option>
+            </select>
+            <select id="language">
+                <option value="" disabled selected>Language</option>
+                <option value="english">English</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Tagalog">Tagalog</option>
+                <option value="Korean">Korean</option>
+                <option value="Vietnamese">Vietnamese</option>
+                <option value="Arabic">Arabic</option>
+                <option value="French">French</option>
+                <option value="Russian">Russian</option>
+                <option value="Portuguese">Portuguese</option>
+                <option value="German">German</option>
+                <option value="Polish">Polish</option>
+                <option value="Italian">Italian</option>
+            </select>
+            <button id="summarify-btn">Execute</button>
+
+            <!-- Container where the video content will be displayed -->
+            <div id="video-content" style="display:none;">
+                <!-- The content here will be dynamically loaded based on JavaScript -->
+            </div>
+        </div>
+
+        <div id="video-info">
+            <div id="message" style="display: none;"></div>
+            
+            <!--<div id="loading-message" style="display: none;">Loading message will appear here...</div>-->
+            
+            <!-- Loading Content -->
+            <div class="loading-content" style="display:none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Please wait<br>The task is being executed. Please wait until it is completed.</p>
+            </div>
+  
+            <!-- <img id="thumbnail" src="" alt="Video thumbnail" style="display: none;"> -->
+
+            <div id="video-player-container" style="display: none;"></div>
+        
+            <p id="video-title" style="display: none;">Video title will appear here...</p>
+            
+            <!-- transcription window -->
+            <div class="transcription-window" style="display: none;">
+                <p id="summary" style="display: none;">Summary will appear here...</p>
+            </div>
+        </div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
