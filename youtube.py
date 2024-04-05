@@ -7,7 +7,6 @@ import traceback
 from lit import extract_audio, summarize_video, transcribe_in_chunks
 import os
 from open import text_to_speech
-import pathlib as Path
 
 #! Still need to debug on the embed video
 def cleanup_files(directory, file_extensions):
@@ -22,6 +21,7 @@ def cleanup_files(directory, file_extensions):
 
                 
 current_dir = os.path.dirname(os.path.realpath(__file__))
+# Google API Secret Key
 credential_path = os.path.join(current_dir, 'JSON/google_key.json')
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
