@@ -1,14 +1,13 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from google.cloud import translate_v2 as translate
 from google.cloud import exceptions
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
 import traceback
-import os
-#from feature_extraction import generate_video_summary
-#from speech_to_text import video_to_text_transcription
 from lit import extract_audio, summarize_video, transcribe_in_chunks
 import os
+from open import text_to_speech
+import pathlib as Path
 
 #! Still need to debug on the embed video
 def cleanup_files(directory, file_extensions):
@@ -27,6 +26,12 @@ credential_path = os.path.join(current_dir, 'JSON/google_key.json')
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 app = Flask(__name__, template_folder='Front_end')
+
+@app.route('/audio/<filename>')
+def serve_audio(filename):
+    # Serve the audio file from the root directory of the Flask app
+    directory = os.path.join(app.root_path)  # The directory where your app.py is located.
+    return send_from_directory(directory, filename)
 
 @app.route('/')
 def index():
@@ -59,7 +64,7 @@ def summarize():
         subdirectory = '.'
         full_cleanup_path = os.path.join(current_dir, subdirectory)
 
-        cleanup_files(full_cleanup_path, ['wav', '.mp3', '.mp4'])
+        cleanup_files(full_cleanup_path, ['wav', 'mp3', 'mp4'])
 
         # Generate the necessary data, such as downloading the video, generating captions, etc.
         video_path = download_video_with_audio(video_url)
@@ -80,6 +85,8 @@ def summarize():
 
         # Initialize translated_transcription
         translated_transcription = ""
+        # Initialize audio url
+        audio_url = ""
 
         #! Transcription only
         if summary_style == 'Transcribe':
@@ -89,6 +96,8 @@ def summarize():
                 # If transcription is not empty, proceed to translate
                 try:
                     translated_transcription = translate_text(transcription, language)
+
+                    audio_url = text_to_speech(translated_transcription)
                 except Exception as e:
                     app.logger.error('Translation failed: %s', str(e))
                     return jsonify({'error': 'Translation failed'}), 500
@@ -105,6 +114,13 @@ def summarize():
                 # If transcription is not empty, proceed to translate
                 try:
                     translated_transcription = translate_text(transcription, language)
+
+                    speech_file_path = text_to_speech(translated_transcription)
+
+                    audio_file = speech_file_path.name
+
+                    # Convert the Path object to a string for the full path
+                    audio_url = f"/audio/{audio_file}"
                 except Exception as e:
                     app.logger.error('Translation failed: %s', str(e))
                     return jsonify({'error': 'Translation failed'}), 500
@@ -121,7 +137,8 @@ def summarize():
             #'thumbnail_url': yt.thumbnail_url,
             'embed_video': embed_url,
             'video_path': video_path,
-            'transcription': translated_transcription
+            'transcription': translated_transcription,
+            'audio': audio_url
         }
         
         # Return the response before cleanup

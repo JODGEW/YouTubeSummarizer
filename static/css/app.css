@@ -172,6 +172,26 @@ select option[value=""][disabled] {
     margin: 0; /* Remove default paragraph margins */
 }
 
+/* Audio buttons */
+.audio-controls {
+    margin-top: 10px; /* Adjust as needed */
+}
+
+.audio-controls button {
+    background-color: #333; /* Green background */
+    color: white; /* White text */
+    padding: 14px 20px; /* Padding around the text */
+    margin: 10px 5px; /* Margin between buttons */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Mouse pointer on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.audio-controls button:hover {
+    background-color: #555; /* Darker shade of green on hover */
+}
+
 #video-info {
     display: flex;
     flex-direction: column;

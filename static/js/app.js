@@ -80,9 +80,28 @@ $(document).ready(function() {
                 if (response.transcription) {
                     $('.transcription-window').show();
                     $('#summary').text(response.transcription).show();
+                    // Update audio from response structure data
+                    if (response.audio) {
+                        var audioPlayer = document.getElementById('audio-player');
+                        audioPlayer.src = response.audio;
+                        audioPlayer.load();
+
+                        $('#play-audio').off('click').on('click', function() {
+                            $('#audio-player').get(0).play();
+                        });
+                
+                        $('#pause-audio').off('click').on('click', function() {
+                            $('#audio-player').get(0).pause();
+                        });
+
+                        $('#play-audio').show();
+                        $('#pause-audio').show();
+                    }
                 } else {
                     $('#summary').text('No translation available.').show();
-                    $('.transcription-window').show(); // If you want to show the message anyway
+                    $('.transcription-window').show();
+                    $('#play-audio').hide();
+                    $('#pause-audio').hide();
                 }
                 
                 // Check for the video URL in the response before attempting to update the video player
