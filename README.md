@@ -4,7 +4,7 @@ A web app for transcribing, summarizing, and translating YouTube videos globally
 ## Steps for Execution
 
 1. Clone the Git repository
-2. Run `pip install -r requirements.txt`
+2. Run `pip install -r requirement.txt`
 3. Open Command Prompt and change the directory to the location of cloned repository
 4. Create your own Google OAuth authentication, Google Cloud service account keys, and openAI API key for future use
 5. Run the command `python .\youtube.py`
