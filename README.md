@@ -1,7 +1,7 @@
 # YouTubeSummarizer
 A web app for transcribing, summarizing, and translating YouTube videos globally
 
-## Steps for Execution
+## Steps to Run:
 
 1. Clone the Git repository
 2. Run `pip install -r requirement.txt`
