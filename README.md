@@ -95,6 +95,13 @@ The browser uses these; they are also usable directly.
 Jobs live in the memory of a single process, so this runs as one worker. A
 multi-worker deployment would need shared job state (Redis or a database).
 
-## Demo
+## Screenshots
 
-https://github.com/JODGEW/YouTubeSummarizer/assets/47671565/4b366609-f344-4f51-8a2e-564e021e9dd3
+From a real run: Andrej Karpathy's one-hour LLM talk, summarized from its
+caption track and read back as generated audio.
+
+![The start page](docs/idle.png)
+
+![A job in progress — the stage rail follows the pipeline as it works](docs/processing.png)
+
+![The reading page: summary, embedded player, and the audio dock](docs/result.png)
