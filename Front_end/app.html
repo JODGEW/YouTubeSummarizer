@@ -3,93 +3,222 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <title>Summify - Video Summarizer</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/app.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Summify — read the video</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 
 <body>
-    <header>
-        <h1>SUMMIFY</h1>
-        <p>Good day, Jakcy &#128075;</p>
+    <!-- Reading progress. Driven by a scroll listener, shown only on the result page. -->
+    <div class="read-progress" id="read-progress" aria-hidden="true">
+        <span class="read-progress-fill" id="read-progress-fill"></span>
+    </div>
+
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('index') }}">Summify</a>
+
+        <form class="controls" id="job-form" autocomplete="off">
+            <div class="url-field">
+                <input type="text" id="video-url" name="video_url" placeholder="Paste a YouTube link"
+                    aria-label="YouTube video URL" spellcheck="false">
+                <button type="button" class="paste-btn" id="paste-btn">Paste</button>
+            </div>
+
+            <div class="mode-toggle" role="radiogroup" aria-label="What to produce">
+                <label class="mode-opt">
+                    <input type="radio" name="mode" value="transcribe">
+                    <span>Transcribe</span>
+                </label>
+                <span class="mode-sep" aria-hidden="true">/</span>
+                <label class="mode-opt">
+                    <input type="radio" name="mode" value="summarize" checked>
+                    <span>Summarize</span>
+                </label>
+            </div>
+
+            <select id="language" name="language" class="lang-select" aria-label="Output language">
+                <option value="en">in English</option>
+                <option value="es">in Spanish</option>
+                <option value="hi">in Hindi</option>
+                <option value="zh">in Chinese</option>
+                <option value="tl">in Tagalog</option>
+                <option value="ko">in Korean</option>
+                <option value="vi">in Vietnamese</option>
+                <option value="ar">in Arabic</option>
+                <option value="fr">in French</option>
+                <option value="ru">in Russian</option>
+                <option value="pt">in Portuguese</option>
+                <option value="de">in German</option>
+                <option value="pl">in Polish</option>
+                <option value="it">in Italian</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary run-btn" id="run-btn">
+                <span id="run-label">Summarize</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                </svg>
+            </button>
+        </form>
     </header>
-    
-    <aside id="sidebar">
-        <!-- Sidebar content here -->
-        <div id="menu">
-            <p>Dashboard</p>
-            <p>Archive</p>
-        </div>
-    </aside>
 
-    <div class="main-content">
-        <div class="title">Summarize any video</div>
-        <div class="subtitle">Podcasts, talk shows, interviews, documentaries, or any other video.</div>
+    <p class="form-error" id="form-error" role="alert" hidden></p>
 
-        <div class="input-area">
-            <input type="text" placeholder="YouTube Video URL" id="video-url">
-            <select id="summary-style">
-                <option value="" disabled selected>Summary style</option>
-                <option value="Transcribe">Transcribe</option>
-                <option value="Summarize">Summarize</option>
-            </select>
-            <select id="language">
-                <option value="" disabled selected>Language</option>
-                <option value="english">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="Hindi">Hindi</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Tagalog">Tagalog</option>
-                <option value="Korean">Korean</option>
-                <option value="Vietnamese">Vietnamese</option>
-                <option value="Arabic">Arabic</option>
-                <option value="French">French</option>
-                <option value="Russian">Russian</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="German">German</option>
-                <option value="Polish">Polish</option>
-                <option value="Italian">Italian</option>
-            </select>
-            <button id="summarify-btn">Execute</button>
+    <main class="site-main">
 
-            <!-- Container where the video content will be displayed -->
-            <div id="video-content" style="display:none;">
-                <!-- The content here will be dynamically loaded based on JavaScript -->
+        <!-- ── Idle ───────────────────────────────────────────────────── -->
+        <section class="state state-idle" id="state-idle">
+            <div>
+                <div class="kicker kicker-accent">Read the video</div>
+                <h1 class="display-xl">Two hours of talking, four minutes of reading.</h1>
+                <p class="lede">Summify reads the captions when a video has them, listens to the audio when it
+                    doesn't, and hands you a page instead of a wall of text.</p>
             </div>
-        </div>
+            <aside class="idle-aside">
+                <div class="idle-dot" aria-hidden="true"></div>
+                <p class="idle-note">Anything with captions is instant. Anything without gets transcribed. Either way
+                    it comes back in your language, and usually as audio too.</p>
+            </aside>
+        </section>
 
-        <div id="video-info">
-            <div id="message" style="display: none;"></div>
-            
-            <!--<div id="loading-message" style="display: none;">Loading message will appear here...</div>-->
-            
-            <!-- Loading Content -->
-            <div class="loading-content" style="display:none;">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Please wait<br>The task is being executed. Please wait until it is completed.</p>
+        <!-- ── Processing ─────────────────────────────────────────────── -->
+        <section class="state state-processing" id="state-processing" hidden>
+            <div class="processing-rail">
+                <div class="kicker">Reading the video</div>
+                <div class="progress-figure" id="progress-percent" aria-hidden="true">0%</div>
+                <ol class="stage-list" id="stage-list" aria-live="polite"></ol>
             </div>
-  
-            <!-- <img id="thumbnail" src="" alt="Video thumbnail" style="display: none;"> -->
-
-            <div id="video-player-container" style="display: none;"></div>
-        
-            <p id="video-title" style="display: none;">Video title will appear here...</p>
-            
-            <!-- transcription window -->
-            <div class="transcription-window" style="display: none;">
-                <p id="summary" style="display: none;">Summary will appear here...</p>
-                <audio id="audio-player" style="display: none;"></audio>
-                <div class="audio-controls">
-                    <button id="play-audio">Play Audio</button>
-                    <button id="pause-audio">Pause Audio</button>
+            <div class="processing-body">
+                <div class="media-frame media-frame-placeholder washed" aria-hidden="true">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="6 3 20 12 6 21 6 3" />
+                    </svg>
+                </div>
+                <div class="skeleton" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span>
                 </div>
             </div>
-            
-        </div>
-    </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        </section>
+
+        <!-- ── Error ──────────────────────────────────────────────────── -->
+        <section class="state state-error" id="state-error" hidden role="alert">
+            <div class="kicker kicker-accent">Couldn't read it</div>
+            <h1 class="display-md" id="error-message"></h1>
+            <button type="button" class="link-action" id="error-reset">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                </svg>
+                Start a new one
+            </button>
+        </section>
+
+        <!-- ── Result ─────────────────────────────────────────────────── -->
+        <article class="state state-result" id="state-result" hidden>
+            <div class="media-frame" id="result-media">
+                <iframe id="result-embed" title="Video player" frameborder="0"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+                <a class="watch-chip" id="watch-link" href="#" target="_blank" rel="noopener noreferrer">
+                    <span class="watch-chip-icon" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                            <polygon points="7 4 20 12 7 20 7 4" />
+                        </svg>
+                    </span>
+                    Watch on YouTube
+                </a>
+            </div>
+
+            <div class="result-grid">
+                <div class="result-rail">
+                    <!-- Chapters. Hidden until the API returns result.sections. -->
+                    <nav class="rail-block" id="chapter-block" hidden aria-label="Chapters">
+                        <div class="kicker">Chapters</div>
+                        <div class="chapter-list" id="chapter-list"></div>
+                    </nav>
+
+                    <!-- Listen. Hidden when the text was too long for text-to-speech. -->
+                    <div class="rail-block rail-divided" id="listen-block" hidden>
+                        <audio id="audio-player" preload="metadata"></audio>
+                        <button type="button" class="dock-play" id="dock-play" aria-label="Play the audio">
+                            <span class="dock-play-icon" aria-hidden="true">
+                                <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                                    stroke="none">
+                                    <polygon points="7 4 20 12 7 20 7 4" />
+                                </svg>
+                                <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+                                    stroke="none" hidden>
+                                    <rect x="6" y="4" width="4" height="16" rx="1.5" />
+                                    <rect x="14" y="4" width="4" height="16" rx="1.5" />
+                                </svg>
+                            </span>
+                            <span id="dock-play-label">Listen instead</span>
+                        </button>
+
+                        <input type="range" class="dock-scrub" id="dock-scrub" min="0" max="100" step="0.1" value="0"
+                            aria-label="Seek through the audio">
+
+                        <div class="dock-meta">
+                            <span class="dock-time" id="dock-time">0:00 / 0:00</span>
+                            <button type="button" class="dock-speed" id="dock-speed"
+                                aria-label="Playback speed">1×</button>
+                        </div>
+                    </div>
+
+                    <div class="rail-block rail-divided rail-actions">
+                        <button type="button" class="rail-action" id="copy-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </svg>
+                            <span id="copy-label">Copy text</span>
+                        </button>
+                        <button type="button" class="rail-action" id="download-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <path d="m7 10 5 5 5-5" />
+                                <path d="M12 15V3" />
+                            </svg>
+                            Download .txt
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-body">
+                    <div class="kicker kicker-accent" id="result-kicker"></div>
+                    <h1 class="display-lg" id="result-title"></h1>
+                    <div class="result-meta" id="result-meta"></div>
+
+                    <!-- Key points. Hidden until the API returns result.key_points. -->
+                    <div class="key-points" id="key-points-block" hidden>
+                        <div class="key-points-bar" aria-hidden="true"></div>
+                        <div>
+                            <div class="kicker kicker-accent-2">If you read nothing else</div>
+                            <div class="key-points-list" id="key-points-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="prose" id="result-prose"></div>
+
+                    <!-- Chaptered sections. Hidden until the API returns result.sections. -->
+                    <div id="section-list" hidden></div>
+
+                    <div class="result-footer" id="result-footer" hidden></div>
+                </div>
+            </div>
+        </article>
+    </main>
+
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 
