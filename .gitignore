@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Secrets
+api.yaml
+JSON/
+*.env
+.env
+
+# Runtime artifacts (downloads, generated audio, temp working dirs)
+runtime/
+*.wav
+*.mp3
+*.mp4
+*.m4a
+*.webm
+script.txt
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

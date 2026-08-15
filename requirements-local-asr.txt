@@ -1,0 +1,4 @@
+# Optional: only needed when ASR_BACKEND=local, which runs Whisper on this
+# machine instead of calling the hosted transcription API.
+-r requirements.txt
+faster-whisper>=1.0

@@ -1,0 +1,6 @@
+Flask>=3.0,<4
+yt-dlp>=2024.8.6
+youtube-transcript-api>=1.0,<2
+openai>=1.40,<4
+google-cloud-translate>=3.15,<4
+python-dotenv>=1.0

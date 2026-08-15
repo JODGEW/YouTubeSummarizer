@@ -1,43 +1,58 @@
-import os
-from google.cloud import translate_v2 as translate
+"""Translation through Google Cloud Translate v2."""
 
-def set_up_credentials():
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    credential_path = os.path.join(current_dir, 'JSON/google_key.json')
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
+import html
 
-def read_text_from_file(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+import config
+from clients import get_translate_client
+from errors import PipelineError
+from textutil import split_into_chunks
 
-def empty_file(file_path):
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write("")
 
-def process_and_translate_txt(file_path, target_language='zh'):
-    # Set up the credentials for the Translation API
-    set_up_credentials()
-    
-    # Read text from the file
-    text = read_text_from_file(file_path)
-    if not text:
-        print("The file is already empty or has been processed.")
-        return "No content to translate."
-
-    # Proceed with translation
-    translate_client = translate.Client()
-    result = translate_client.translate(text, target_language=target_language)
-    translation = result['translatedText']
-    print(f"Translation: {translation}")
-
-    # Empty the file after translating
-    empty_file(file_path)
-
-    return translation
-
-if __name__ == '__main__':
-    file_path = r"C:\Users\hejac\Desktop\YouTube_Summarizer\script.txt"
+def detect_language(text: str) -> str:
+    """Best-effort source language; "unknown" if detection fails."""
     try:
-        translation = process_and_translate_txt(file_path)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        result = get_translate_client().detect_language(text[:2000])
+    except PipelineError:
+        raise
+    except Exception:
+        return "unknown"
+    if isinstance(result, list):
+        result = result[0] if result else {}
+    return result.get("language", "unknown")
+
+
+def translate_text(text: str, target_language: str, source_language: str = "") -> str:
+    """Translate text, or return it untouched when it is already in the target
+    language. Google is billed per character, so skipping that case matters."""
+    text = (text or "").strip()
+    if not text:
+        raise PipelineError("translation_failed", "There is no text to translate.")
+    if not target_language:
+        return text
+
+    known_source = source_language or detect_language(text)
+    if known_source.split("-")[0].lower() == target_language.split("-")[0].lower():
+        return text
+
+    client = get_translate_client()
+    pieces = []
+    for chunk in split_into_chunks(text, config.TRANSLATE_CHUNK_CHARS):
+        try:
+            result = client.translate(
+                chunk,
+                target_language=target_language,
+                # Without this Google returns HTML and escapes quotes as &#39;.
+                format_="text",
+                source_language=known_source if known_source != "unknown" else None,
+            )
+        except Exception as exc:
+            raise PipelineError(
+                "translation_failed",
+                "The text could not be translated. Please try again in a moment.",
+            ) from exc
+        if isinstance(result, list):
+            result = result[0] if result else {}
+        pieces.append(html.unescape(result.get("translatedText", "")))
+
+    translated = " ".join(p for p in pieces if p).strip()
+    return translated or text
